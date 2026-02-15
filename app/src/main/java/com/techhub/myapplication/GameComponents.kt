@@ -30,7 +30,7 @@ fun TextForQuestion(text: String){
 
     Text(
         text = text,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         color = Color.White,
         textAlign = TextAlign.Center,
         modifier = Modifier

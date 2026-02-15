@@ -69,6 +69,8 @@ fun SecondPage(navController: NavController, category: String){
                     myQuestion.value = "Sorry, time is up!"
                     life.value -= 1
                     isEnabled.value = false
+                    isChecked.value = false
+                    myAnswer.value = ""
                 }
 
                 override fun onTick(millisUntilFinished: Long) {
