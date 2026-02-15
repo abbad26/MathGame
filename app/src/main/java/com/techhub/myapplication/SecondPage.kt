@@ -58,7 +58,7 @@ fun SecondPage(navController: NavController, category: String){
     val myAnswer = remember { mutableStateOf("") }
     val isEnabled = remember { mutableStateOf(true) }
     val correctAnswer = remember { mutableStateOf(0) }
-    //val isChecked = remember { mutableStateOf(false) }
+    val isChecked = remember { mutableStateOf(true) }
 
     val totalTimeInMillis = remember { mutableStateOf(15000L) }
     val timer = remember {
@@ -163,65 +163,79 @@ fun SecondPage(navController: NavController, category: String){
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.Center
                 ) {
 
+                    if (isChecked.value) {
 
-                    // ok button
-                    ButtonOkNext(
-                        buttonText = "Ok",
-                        myOnClick = {
+                        // OK BUTTON
+                        ButtonOkNext(
+                            buttonText = "Check",
+                            myOnClick = {
 
+                                if (myAnswer.value.isEmpty()) {
 
-                            if (myAnswer.value.isEmpty()){
+                                    Toast.makeText(
+                                        myContext,
+                                        "Write an answer",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                                Toast.makeText(myContext, "Write an answer or click the next button", Toast.LENGTH_SHORT).show()
-                            }else{
-                                timer.value.cancel()
-                                isEnabled.value = false
+                                } else {
 
-                                if (myAnswer.value.toInt() == correctAnswer.value){
-                                    score.value += 10
-                                    myQuestion.value = "Congratulations"
+                                    timer.value.cancel()
+
+                                    if (myAnswer.value.toInt() == correctAnswer.value) {
+                                        score.value += 10
+                                        myQuestion.value = "Congratulations 🎉"
+                                    } else {
+                                        life.value -= 1
+                                        myQuestion.value = "Sorry, wrong answer ❌"
+                                    }
+
                                     myAnswer.value = ""
-                                }else{
-                                    life.value -= 1
-                                    myQuestion.value = "Sorry, your answer is wrong."
+                                    isChecked.value = false   // Next show hoga
                                 }
-                            }
-                        },
-                        isEnabled = isEnabled.value
-                    )
+                            },
+                            isEnabled = true
+                        )
 
-                    // next button
-                    ButtonOkNext(
-                        buttonText = "Next",
-                        myOnClick = {
+                    } else {
 
-                            timer.value.cancel()
-                            timer.value.start()
+                        // NEXT BUTTON
+                        ButtonOkNext(
+                            buttonText = "Next",
+                            myOnClick = {
 
-                            if (life.value == 0){
+                                if (life.value == 0) {
 
-                                Toast.makeText(myContext, "Game Over!", Toast.LENGTH_SHORT).show()
-                                // open the result page
+                                    Toast.makeText(
+                                        myContext,
+                                        "Game Over!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                                navController.navigate("ResultPage/${score.value}"){
-                                    popUpTo("FirstPage"){ inclusive = false}
+                                    navController.navigate("ResultPage/${score.value}") {
+                                        popUpTo("FirstPage") { inclusive = false }
+                                    }
+
+                                } else {
+
+                                    val newResultList = generateQuestion(category)
+                                    myQuestion.value = newResultList[0].toString()
+                                    correctAnswer.value =
+                                        newResultList[1].toString().toInt()
+
+                                    timer.value.cancel()
+                                    timer.value.start()
+
+                                    isChecked.value = true   // Fir se Check show
                                 }
-                            }else{
-                                val newResultList = generateQuestion(category)
-                                myQuestion.value = newResultList[0].toString()
-                                correctAnswer.value = newResultList[1].toString().toInt()
-                                myAnswer.value = ""
-                                isEnabled.value = true
-
-                            }
-                        },
-                        isEnabled = true
-                    )
+                            },
+                            isEnabled = true
+                        )
+                    }
                 }
-
 
             }
         }
