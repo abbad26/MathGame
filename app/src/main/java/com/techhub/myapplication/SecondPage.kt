@@ -231,7 +231,7 @@ fun SecondPage(navController: NavController, category: String){
                                     timer.value.cancel()
                                     timer.value.start()
 
-                                    isChecked.value = true   // Fir se Check show
+                                    isChecked.value = true   // Fir se Check show hoga
                                 }
                             },
                             isEnabled = true
